@@ -124,7 +124,7 @@ const AnalyticsPage = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-muted-foreground font-body">{split.elevation}</span>
-                  {faster && <TrendingDown className="w-3.5 h-3.5 text-green-500" strokeWidth={1.5} />}
+                  {faster && <TrendingDown className="w-3.5 h-3.5 text-primary" strokeWidth={1.5} />}
                   {slower && <TrendingUp className="w-3.5 h-3.5 text-destructive" strokeWidth={1.5} />}
                 </div>
               </div>
