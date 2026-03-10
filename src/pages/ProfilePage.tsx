@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, ChevronRight, Activity, Target, Zap, MapPin, Trophy, Edit2, Check, X } from "lucide-react";
+import { User, ChevronRight, Activity, Target, Zap, MapPin, Trophy, Edit2, Check, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const container = {
   hidden: { opacity: 0 },
