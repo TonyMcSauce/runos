@@ -12,7 +12,6 @@ const tabs = [
 const BottomNav = () => {
   const location = useLocation();
 
-  // Hide nav during focus mode
   if (location.pathname === "/focus") return null;
 
   return (
@@ -30,8 +29,8 @@ const BottomNav = () => {
                 {isActive && (
                   <motion.div
                     layoutId="tab-indicator"
-                    className="absolute inset-0 -mx-3 -my-1 rounded-full bg-primary/10"
-                    style={{ width: 48, height: 32, left: -12, top: -4 }}
+                    className="absolute rounded-full gradient-strava"
+                    style={{ width: 44, height: 28, left: -12, top: -4, opacity: 0.12 }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
                   />
                 )}

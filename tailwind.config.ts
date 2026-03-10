@@ -52,6 +52,14 @@ export default {
           foreground: "hsl(var(--card-foreground))",
         },
         "surface-elevated": "hsl(var(--surface-elevated))",
+        success: {
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -84,8 +92,12 @@ export default {
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         "pulse-ring": {
-          "0%": { transform: "scale(1)", opacity: "1" },
-          "100%": { transform: "scale(1.5)", opacity: "0" },
+          "0%": { transform: "scale(1)", opacity: "0.6" },
+          "100%": { transform: "scale(1.8)", opacity: "0" },
+        },
+        "shimmer": {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
         },
       },
       animation: {
@@ -93,6 +105,7 @@ export default {
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-up": "fade-up 0.5s ease-out forwards",
         "pulse-ring": "pulse-ring 1.5s ease-out infinite",
+        "shimmer": "shimmer 2s ease-in-out infinite",
       },
     },
   },

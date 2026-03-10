@@ -23,6 +23,9 @@ const FocusMode = () => {
       exit={{ opacity: 0 }}
       className="fixed inset-0 bg-background z-50 flex flex-col items-center justify-center"
     >
+      {/* Subtle gradient orb */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-primary/5 blur-3xl" />
+
       <button
         onClick={() => navigate(-1)}
         className="absolute top-12 right-6 text-muted-foreground active:text-foreground transition-colors"
@@ -30,21 +33,21 @@ const FocusMode = () => {
         <X className="w-6 h-6" strokeWidth={1.5} />
       </button>
 
-      <div className="text-center space-y-10">
+      <div className="text-center space-y-12 relative z-10">
         <div>
-          <span className="metric-text text-7xl text-foreground tabular-nums">
+          <span className="metric-text text-8xl text-foreground tabular-nums">
             {m.toString().padStart(2, "0")}:{s.toString().padStart(2, "0")}
           </span>
         </div>
 
-        <div className="flex gap-12">
+        <div className="flex gap-16">
           <div className="text-center">
             <span className="metric-text text-3xl text-foreground">{distance.toFixed(2)}</span>
-            <p className="text-xs text-muted-foreground font-body mt-1">km</p>
+            <p className="text-xs text-muted-foreground font-body mt-1 uppercase tracking-wider">km</p>
           </div>
           <div className="text-center">
-            <span className="metric-text text-3xl text-foreground">5:03</span>
-            <p className="text-xs text-muted-foreground font-body mt-1">/km</p>
+            <span className="metric-text text-3xl text-primary">5:03</span>
+            <p className="text-xs text-muted-foreground font-body mt-1 uppercase tracking-wider">/km</p>
           </div>
         </div>
       </div>
