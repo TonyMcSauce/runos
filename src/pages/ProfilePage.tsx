@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, ChevronRight, Activity, Target, Zap, MapPin, Trophy } from "lucide-react";
+import { User, ChevronRight, Activity, Target, Zap, MapPin, Trophy, Edit2, Check, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 const container = {
   hidden: { opacity: 0 },
@@ -10,7 +13,52 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
+interface ProfileData {
+  name: string;
+  age: string;
+  weight: string;
+  height: string;
+  experience: string;
+  weeklyGoal: number;
+  monthlyRunsGoal: number;
+  fiveKGoal: number;
+}
+
+const DEFAULT_PROFILE: ProfileData = {
+  name: "Alex Runner",
+  age: "28",
+  weight: "72",
+  height: "178",
+  experience: "Advanced",
+  weeklyGoal: 30,
+  monthlyRunsGoal: 20,
+  fiveKGoal: 22,
+};
+
+const EXPERIENCE_LEVELS = ["Beginner", "Intermediate", "Advanced", "Elite"];
+
 const ProfilePage = () => {
+  const [profile, setProfile] = useState<ProfileData>(() => {
+    const saved = localStorage.getItem("runos-profile");
+    return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
+  });
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState<ProfileData>(profile);
+
+  useEffect(() => {
+    localStorage.setItem("runos-profile", JSON.stringify(profile));
+  }, [profile]);
+
+  const handleSave = () => {
+    setProfile(draft);
+    setEditing(false);
+  };
+
+  const handleCancel = () => {
+    setDraft(profile);
+    setEditing(false);
+  };
+
   return (
     <motion.div
       variants={container}
@@ -23,11 +71,96 @@ const ProfilePage = () => {
         <div className="w-16 h-16 rounded-full gradient-strava flex items-center justify-center shadow-lg">
           <User className="w-7 h-7 text-primary-foreground" strokeWidth={1.5} />
         </div>
-        <div>
-          <h1 className="font-display text-xl font-bold text-foreground">Alex Runner</h1>
-          <p className="text-xs text-muted-foreground font-body uppercase tracking-wider">Advanced • 5 years</p>
+        <div className="flex-1">
+          {editing ? (
+            <Input
+              value={draft.name}
+              onChange={(e) => setDraft({ ...draft, name: e.target.value })}
+              className="font-display text-xl font-bold h-8 bg-secondary border-none"
+            />
+          ) : (
+            <h1 className="font-display text-xl font-bold text-foreground">{profile.name}</h1>
+          )}
+          <p className="text-xs text-muted-foreground font-body uppercase tracking-wider">
+            {profile.experience} • {profile.age} yrs
+          </p>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => editing ? handleSave() : setEditing(true)}
+          className="rounded-full"
+        >
+          {editing ? (
+            <Check className="w-5 h-5 text-success" strokeWidth={2} />
+          ) : (
+            <Edit2 className="w-4 h-4 text-muted-foreground" strokeWidth={1.5} />
+          )}
+        </Button>
+        {editing && (
+          <Button variant="ghost" size="icon" onClick={handleCancel} className="rounded-full -ml-2">
+            <X className="w-5 h-5 text-destructive" strokeWidth={2} />
+          </Button>
+        )}
       </motion.div>
+
+      {/* Editable Details */}
+      {editing && (
+        <motion.div
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="bg-card rounded-2xl p-4 space-y-3"
+        >
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="text-[10px] text-muted-foreground font-body uppercase tracking-wider">Age</label>
+              <Input
+                type="number"
+                value={draft.age}
+                onChange={(e) => setDraft({ ...draft, age: e.target.value })}
+                className="h-9 bg-secondary border-none mt-1"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground font-body uppercase tracking-wider">Weight (kg)</label>
+              <Input
+                type="number"
+                value={draft.weight}
+                onChange={(e) => setDraft({ ...draft, weight: e.target.value })}
+                className="h-9 bg-secondary border-none mt-1"
+              />
+            </div>
+            <div>
+              <label className="text-[10px] text-muted-foreground font-body uppercase tracking-wider">Height (cm)</label>
+              <Input
+                type="number"
+                value={draft.height}
+                onChange={(e) => setDraft({ ...draft, height: e.target.value })}
+                className="h-9 bg-secondary border-none mt-1"
+              />
+            </div>
+          </div>
+          <div>
+            <label className="text-[10px] text-muted-foreground font-body uppercase tracking-wider">Experience</label>
+            <div className="flex gap-2 mt-1">
+              {EXPERIENCE_LEVELS.map((lvl) => (
+                <button
+                  key={lvl}
+                  onClick={() => setDraft({ ...draft, experience: lvl })}
+                  className={`flex-1 py-2 rounded-xl text-xs font-display font-semibold transition-all ${
+                    draft.experience === lvl
+                      ? "gradient-strava text-primary-foreground"
+                      : "bg-secondary text-secondary-foreground"
+                  }`}
+                >
+                  {lvl}
+                </button>
+              ))}
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* Stats Cards */}
       <motion.div variants={item} className="grid grid-cols-3 gap-2">
@@ -55,9 +188,9 @@ const ProfilePage = () => {
           Current Goals
         </h2>
         <div className="bg-card rounded-2xl p-4 space-y-4">
-          <GoalRow label="Weekly Distance" current={24.8} target={30} unit="km" />
-          <GoalRow label="Monthly Runs" current={12} target={20} unit="runs" />
-          <GoalRow label="5K Target" current={22.45} target={22} unit="min" />
+          <GoalRow label="Weekly Distance" current={24.8} target={profile.weeklyGoal} unit="km" editing={editing} onTargetChange={(v) => setDraft({ ...draft, weeklyGoal: v })} draftTarget={draft.weeklyGoal} />
+          <GoalRow label="Monthly Runs" current={12} target={profile.monthlyRunsGoal} unit="runs" editing={editing} onTargetChange={(v) => setDraft({ ...draft, monthlyRunsGoal: v })} draftTarget={draft.monthlyRunsGoal} />
+          <GoalRow label="5K Target" current={22.45} target={profile.fiveKGoal} unit="min" editing={editing} onTargetChange={(v) => setDraft({ ...draft, fiveKGoal: v })} draftTarget={draft.fiveKGoal} />
         </div>
       </motion.div>
 
@@ -100,15 +233,32 @@ const RecordRow = ({ icon, label, value }: { icon: React.ReactNode; label: strin
   </div>
 );
 
-const GoalRow = ({ label, current, target, unit }: { label: string; current: number; target: number; unit: string }) => {
-  const pct = Math.min((current / target) * 100, 100);
+const GoalRow = ({ label, current, target, unit, editing, onTargetChange, draftTarget }: {
+  label: string; current: number; target: number; unit: string;
+  editing: boolean; onTargetChange: (v: number) => void; draftTarget: number;
+}) => {
+  const displayTarget = editing ? draftTarget : target;
+  const pct = Math.min((current / displayTarget) * 100, 100);
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between">
         <span className="text-[11px] text-muted-foreground font-body">{label}</span>
-        <span className="text-[11px] text-muted-foreground font-body">
-          {current} / {target} {unit}
-        </span>
+        {editing ? (
+          <div className="flex items-center gap-1">
+            <span className="text-[11px] text-muted-foreground font-body">{current} /</span>
+            <Input
+              type="number"
+              value={draftTarget}
+              onChange={(e) => onTargetChange(Number(e.target.value))}
+              className="w-16 h-6 text-[11px] bg-secondary border-none px-2"
+            />
+            <span className="text-[11px] text-muted-foreground font-body">{unit}</span>
+          </div>
+        ) : (
+          <span className="text-[11px] text-muted-foreground font-body">
+            {current} / {displayTarget} {unit}
+          </span>
+        )}
       </div>
       <div className="h-1.5 bg-secondary rounded-full overflow-hidden">
         <motion.div
