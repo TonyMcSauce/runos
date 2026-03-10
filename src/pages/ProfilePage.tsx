@@ -227,6 +227,13 @@ const ProfilePage = () => {
             </button>
           ))}
         </div>
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center justify-between px-4 py-3.5 bg-card rounded-2xl mt-2 active:bg-accent/50 transition-colors"
+        >
+          <span className="text-sm text-destructive font-body font-medium">Sign Out</span>
+          <LogOut className="w-4 h-4 text-destructive" strokeWidth={1.5} />
+        </button>
       </motion.div>
     </motion.div>
   );
