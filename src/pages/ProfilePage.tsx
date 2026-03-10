@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { User, ChevronRight, Activity, Target, Zap, MapPin, Trophy, Edit2, Check, X } from "lucide-react";
+import { User, ChevronRight, Activity, Target, Zap, MapPin, Trophy, Edit2, Check, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const container = {
   hidden: { opacity: 0 },
@@ -38,12 +40,27 @@ const DEFAULT_PROFILE: ProfileData = {
 const EXPERIENCE_LEVELS = ["Beginner", "Intermediate", "Advanced", "Elite"];
 
 const ProfilePage = () => {
+  const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<ProfileData>(() => {
     const saved = localStorage.getItem("runos-profile");
     return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
   });
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<ProfileData>(profile);
+
+  // Set name from auth email if default
+  useEffect(() => {
+    if (user && profile.name === DEFAULT_PROFILE.name) {
+      const name = user.email?.split("@")[0] || "Runner";
+      setProfile((p) => ({ ...p, name }));
+      setDraft((d) => ({ ...d, name }));
+    }
+  }, [user]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out");
+  };
 
   useEffect(() => {
     localStorage.setItem("runos-profile", JSON.stringify(profile));
@@ -210,6 +227,13 @@ const ProfilePage = () => {
             </button>
           ))}
         </div>
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center justify-between px-4 py-3.5 bg-card rounded-2xl mt-2 active:bg-accent/50 transition-colors"
+        >
+          <span className="text-sm text-destructive font-body font-medium">Sign Out</span>
+          <LogOut className="w-4 h-4 text-destructive" strokeWidth={1.5} />
+        </button>
       </motion.div>
     </motion.div>
   );
