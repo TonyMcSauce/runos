@@ -40,12 +40,27 @@ const DEFAULT_PROFILE: ProfileData = {
 const EXPERIENCE_LEVELS = ["Beginner", "Intermediate", "Advanced", "Elite"];
 
 const ProfilePage = () => {
+  const { user, signOut } = useAuth();
   const [profile, setProfile] = useState<ProfileData>(() => {
     const saved = localStorage.getItem("runos-profile");
     return saved ? JSON.parse(saved) : DEFAULT_PROFILE;
   });
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState<ProfileData>(profile);
+
+  // Set name from auth email if default
+  useEffect(() => {
+    if (user && profile.name === DEFAULT_PROFILE.name) {
+      const name = user.email?.split("@")[0] || "Runner";
+      setProfile((p) => ({ ...p, name }));
+      setDraft((d) => ({ ...d, name }));
+    }
+  }, [user]);
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out");
+  };
 
   useEffect(() => {
     localStorage.setItem("runos-profile", JSON.stringify(profile));
